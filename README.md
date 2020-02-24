@@ -17,13 +17,15 @@ Provides a means of communicating with one or more PCA9685 boards from a Raspber
 ## Example
 To start a connection with the (or chained) PCA9685 board create an object with the following command:
 ``` python
+from suitceyes import VibrationMotorDriver
+
 # VibrationMotorDriver accepts a variable length of addresses of the i2c board.
 with VibrationMotorDriver(0x41, 0x40) as driver:
     pass 
 ```
 By using the `with` statement all vibrations are stopped once leaving the scope.
 
-To trigger a vibration on a specific pin simply use the `set_vibration(index, intensity)` command.
+To trigger a vibration on a specific pin simply use the `set_vibration(index, intensity)` command. Intensity is a number between 0.0 and 1.0.
 
 ``` python
 with VibrationMotorDriver(0x41, 0x40) as driver:
