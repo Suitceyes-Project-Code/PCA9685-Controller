@@ -29,14 +29,15 @@ To trigger a vibration on a specific pin simply use the `set_vibration(index, in
 
 ``` python
 with VibrationMotorDriver(0x41, 0x40) as driver:
-    # trigger vibration at pin 16 (on board at address 0x40) at full intensity
+    # trigger vibration at index 16 (on board at address 0x40) at full intensity
     driver.set_vibration(16, 1.0)
     # wait one second 
     time.sleep(1)
-    # trigger vibration at pin 16 with half the intensity
+    # trigger vibration at index 16 with half the intensity
     driver.set_vibration(16, 0.5)
     # wait one second 
     time.sleep(1)
-    driver.set_vibration(16, 0.5)
+    # mute vibration at index 16
+    driver.set_vibration(16, 0.0)
 ```
 Note that pins for the board at address `0x41` start at index 0 and go to index 15. Pins at address `0x40` then continue at pin 16 and go up to 31.
