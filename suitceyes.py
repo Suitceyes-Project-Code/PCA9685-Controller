@@ -74,7 +74,11 @@ class VibrationMotorDriver:
         if index < 0 or index >= len(self._controllers):
             raise ValueError("The index must be between 0 & " + (len(self._controllers) -1));
         
-        frequency = max(0, frequency)        
+        frequency = max(0, frequency)
+        
+        if frequency == self._boards[index].frequency:
+            return
+        
         self._boards[index].frequency = frequency
         self._boards[index].isDirty = True
     
@@ -83,8 +87,8 @@ class VibrationMotorDriver:
         # mute all
         for board in self._boards:
             board.isDirty = True
-            for channel in board.channels:
-                channel = 0
+            for i in range(len(board.channels)):
+                board.channels[i] = 0
     
     def mute(self, index):
         """Mutes all vibrations motors for a given board.
@@ -95,10 +99,10 @@ class VibrationMotorDriver:
             raise ValueError("The index must be between 0 & " + (len(self._controllers) -1));
         
         for board in self._boards:
-            if board.index == index:
-                board.isDirty = True
+            if board.index == index:                
                 for channel in board.channels:
                     channel = 0
+                board.isDirty = True
     
     def set_vibration(self, channel, intensity):
         """Sets the vibration for a given channel at the given intensity.
@@ -117,8 +121,14 @@ class VibrationMotorDriver:
         intensity = max(0, min(1, intensity))        
         channelIndex = channel % 16
         boardIndex = int(channel / 16)
+        value = round(0xffff * intensity)
+        
+        # if new value falls below threshold do not make change
+        if abs(value - self._boards[boardIndex].channels[channelIndex]) < 0.001:
+            return
+        
         self._boards[boardIndex].isDirty = True
-        self._boards[boardIndex].channels[channelIndex] = round(0xffff * intensity)
+        self._boards[boardIndex].channels[channelIndex] = value
         
     
     def _Loop(self):
@@ -154,15 +164,9 @@ class VibrationMotorDriver:
 if __name__ == "__main__":
     # Use with "with statement":
     with VibrationMotorDriver(0x41, 0x40) as driver:
-        #driver.set_frequency(0, 250)
-        driver.set_vibration(16, 1.0)
-        time.sleep(2)
-        
-    time.sleep(1)
-    
-    # Use without "with" statement
-    driver = VibrationMotorDriver(0x41, 0x40)
-    driver.start()
-    driver.set_vibration(16, 1.0)
+        driver.set_frequency(0, 500)
+        driver.set_vibration(0, 1.0)
+        time.sleep(5)
+
     time.sleep(2)
     driver.stop()
