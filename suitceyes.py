@@ -85,10 +85,10 @@ class VibrationMotorDriver:
     def mute_all(self):
         """Mutes all vibration motors across all chained PCA9685 boards."""
         # mute all
-        for board in self._boards:
-            board.isDirty = True
+        for board in self._boards:            
             for i in range(len(board.channels)):
                 board.channels[i] = 0
+            board.isDirty = True
     
     def mute(self, index):
         """Mutes all vibrations motors for a given board.
@@ -100,8 +100,8 @@ class VibrationMotorDriver:
         
         for board in self._boards:
             if board.index == index:                
-                for channel in board.channels:
-                    channel = 0
+                for i in range(len(board.channels)):
+                    board.channels[i] = 0
                 board.isDirty = True
     
     def set_vibration(self, channel, intensity):
