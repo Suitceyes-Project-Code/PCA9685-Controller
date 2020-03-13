@@ -114,7 +114,7 @@ class VibrationMotorDriver:
             channel (int): The channel that should be changed.
             intensity (float): A normalized value between 0 - 1 where 1 = full intensity.
         """
-        maxChannels = (len(self._boards) * 16) -1;
+        maxChannels = (len(self._boards) * 16) -1
         if channel > maxChannels:
             raise ValueError("The argument channel is out of range! The value must be between 0 -" + str(maxChannels))
         
@@ -130,7 +130,15 @@ class VibrationMotorDriver:
         self._boards[boardIndex].isDirty = True
         self._boards[boardIndex].channels[channelIndex] = value
         
-    
+    def set_vibration_batched(self, values : dict):
+        """Sets the vibration for list of values.
+
+        Args:
+            values (dict): A dictionary where the key is the channel and the value the intensity.
+        """
+        for index in values:
+            set_vibration(index, values[index])
+
     def _Loop(self):
         while self._is_running:
             currentTime = round(time.time() * 1000); # get time in milliseconds
